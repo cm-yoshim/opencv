@@ -113,11 +113,12 @@ while(True):
     # accumulateWeighted関数の第三引数は「どれくらいの早さで以前の画像を忘れるか」。小さければ小さいほど「最新の画像」を重視する。
     # http://opencv.jp/opencv-2svn/cpp/imgproc_motion_analysis_and_object_tracking.html
     # 小さくしないと前のフレームの残像が残る
-    cv2.accumulateWeighted(gray, avg, 0.01)
+    # 重みは蓄積し続ける。
+    cv2.accumulateWeighted(gray, avg, 0.00001)
     frameDelta = cv2.absdiff(gray, cv2.convertScaleAbs(avg))
 
     # 閾値を設定し、フレームを2値化
-    thresh = cv2.threshold(frameDelta, 20, 255, cv2.THRESH_BINARY)[1]
+    thresh = cv2.threshold(frameDelta, 50, 255, cv2.THRESH_BINARY)[1]
     cv2.imwrite('./thresh.jpg', thresh)
 
     # 輪郭を見つける
@@ -139,8 +140,8 @@ while(True):
     for i in origin_of_arm.values():
         if i != 'unknown!!!':
             print(i)
-
-    avg = None
+    
+    # avg = None # 前フレームと比較するならコメントアウトを外す。
 
     if cv2.waitKey(1) != -1:
         break
